@@ -1,0 +1,14 @@
+exceptions:
+  TooGenericExceptionCaught:
+    active: false
+
+style:
+  UnnecessaryAbstractClass:
+    excludes: [ '**/di/*Module.kt' ]
+
+naming:
+  active: true
+  BooleanPropertyNaming:
+    active: true
+    allowedPattern: '^(is|has|are)'
+    ignoreOverridden: true

@@ -1,27 +1,17 @@
 plugins {
-    id("com.android.application").version("7.3.0").apply(false)
-    id("com.android.library").version("7.3.0").apply(false)
-    id("org.jetbrains.kotlin.android").version(Versions.KOTLIN).apply(false)
-    id(Plugins.detekt).version(Versions.DETEKT).apply(false)
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.hilt) apply false
+    alias(libs.plugins.safeargs) apply false
 }
 
-allprojects {
-    apply(plugin = Plugins.detekt)
-
-    tasks.withType(io.gitlab.arturbosch.detekt.Detekt::class) {
-        basePath = projectDir.toString()
-        debug = true
-        parallel = true
-
-        reports {
-            md.required.set(false)
-            sarif.required.set(false)
-            txt.required.set(false)
-            xml.required.set(false)
-            html.required.set(true)
-            html.outputLocation.set(file("build/reports/detekt.html"))
-        }
+subprojects {
+    apply {
+        from(rootProject.file("lint.gradle.kts"))
     }
+}
 
-    tasks.whenTaskAdded { if (name == "preBuild") dependsOn("detekt") }
+tasks.register("clean", Delete::class){
+    delete(rootProject.buildDir)
 }
