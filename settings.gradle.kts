@@ -15,4 +15,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Template"
+include(":core:ui")
 include(":app-template")
