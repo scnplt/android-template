@@ -16,14 +16,14 @@
 
 package dev.sertan.android.core.ui.extension
 
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.annotation.IdRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
-import android.content.pm.PackageManager
-import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavDirections
