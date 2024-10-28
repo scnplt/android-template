@@ -2,8 +2,8 @@ val detekt by configurations.creating
 val ktlint by configurations.creating
 
 dependencies {
-    detekt("io.gitlab.arturbosch.detekt:detekt-cli:1.22.0")
-    ktlint("com.pinterest:ktlint:0.48.0") {
+    detekt("io.gitlab.arturbosch.detekt:detekt-cli:1.23.7")
+    ktlint("com.pinterest:ktlint:0.50.0") {
         attributes {
             attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EXTERNAL))
         }
@@ -35,7 +35,6 @@ tasks.register<JavaExec>("ktlint") {
     classpath = configurations.getByName("ktlint")
     mainClass.set("com.pinterest.ktlint.Main")
     args = listOf(
-        "-a",
         "--reporter=html,output=$outputPath-ktlint.html",
         "src/**/*.kt"
     )
@@ -48,7 +47,7 @@ tasks.register("deleteEmptyReports") {
             .filter { file ->
                 val fileContent = file.readText()
                 fileContent.contains("Congratulations, no issues found!")
-                    || fileContent.contains("Total: 0")
+                        || fileContent.contains("Total: 0")
             }
 
         filesToDelete.forEach { file ->
@@ -64,7 +63,6 @@ tasks.register<JavaExec>("ktlintFormat") {
     classpath = configurations.getByName("ktlint")
     mainClass.set("com.pinterest.ktlint.Main")
     args = listOf(
-        "-a",
         "--format",
         "src/**/*.kt"
     )

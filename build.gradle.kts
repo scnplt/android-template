@@ -27,7 +27,3 @@ subprojects {
         from(rootProject.file("lint.gradle.kts"))
     }
 }
-
-tasks.register("clean", Delete::class){
-    delete(rootProject.buildDir)
-}
