@@ -60,7 +60,7 @@ fun <T> Fragment.savedStateHandleListener(key: String, callback: (T) -> Unit) {
 fun Fragment.doIfPermissionGranted(
     resultLauncher: ActivityResultLauncher<String>,
     permission: String,
-    block: () -> Unit
+    block: () -> Unit,
 ) {
     val permissionResult = ContextCompat.checkSelfPermission(requireContext(), permission)
     if (permissionResult == PackageManager.PERMISSION_GRANTED) return block()
@@ -69,7 +69,7 @@ fun Fragment.doIfPermissionGranted(
 
 fun Fragment.resultLauncher(
     onGranted: () -> Unit = {},
-    onDenied: () -> Unit = {}
+    onDenied: () -> Unit = {},
 ): ActivityResultLauncher<String> = registerForActivityResult(RequestPermission()) {
     if (it) onGranted() else onDenied()
 }
