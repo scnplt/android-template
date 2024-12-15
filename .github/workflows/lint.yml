@@ -21,7 +21,7 @@ jobs:
         run: chmod u+x gradlew
 
       - name: Scan with Ktlint
-        run: ./gradlew ktlint
+        run: ./gradlew ktlintCheck
 
       - name: Scan with Detekt
-        run: ./gradlew detekt
+        run: ./gradlew detektCheck

@@ -15,64 +15,19 @@
  */
 
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.hilt)
-    id("kotlin-kapt")
+    alias(libs.plugins.sc.android.application)
+    alias(libs.plugins.sc.hilt)
+    alias(libs.plugins.sc.navigation)
 }
 
 android {
     namespace = "dev.sertan.android.templateapp"
 
-    compileSdk = 34
-
     defaultConfig {
-        applicationId = "dev.sertan.android.templateapp"
-        minSdk = 23
-        targetSdk = 34
-        versionCode = 1
-        versionName = "0.0.1"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    buildFeatures {
-        viewBinding = true
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-}
-
-kapt {
-    correctErrorTypes = true
 }
 
 dependencies {
-    implementation(libs.core.ktx)
-    implementation(libs.appcompat)
-    implementation(libs.material)
-
-    implementation(libs.navigation.fragment)
-    implementation(libs.navigation.ui)
-
-    implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler.kapt)
+    implementation(projects.core.ui)
 }

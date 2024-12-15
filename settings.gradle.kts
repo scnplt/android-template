@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-@file:Suppress("UnstableApiUsage")
-
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
-        gradlePluginPortal()
-        google()
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
         mavenCentral()
+        gradlePluginPortal()
     }
 }
 
@@ -33,5 +38,8 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Template"
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 include(":core:ui")
 include(":app-template")
