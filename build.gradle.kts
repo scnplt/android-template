@@ -23,3 +23,16 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.safeargs) apply false
 }
+
+task("addPreCommitGitHookOnBuild") {
+    println("Copy pre-commit hook into .git/hooks folder")
+    val from = ".\\.scripts\\pre-commit"
+    val to = ".\\.git\\hooks\\pre-commit"
+    exec {
+        if (System.getProperty("os.name").lowercase().contains("win")) {
+            commandLine("cmd", "/c", "copy", "/Y", from, to)
+        } else {
+            commandLine("cp", from, to)
+        }
+    }
+}

@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Gather the staged files - to make sure changes are saved only for these files.
+stagedFiles=$(git diff --staged --name-only)
+
+# Run Detekt
+echo "Running Detekt..."
+./gradlew detektCheck
+detektStatus=$?
+
+# Run Ktlint
+echo "Running Ktlint..."
+./gradlew ktlintCheck
+ktlintStatus=$?
+
+# Check both statuses
+if [ "$detektStatus" -eq 0 ] && [ "$ktlintStatus" -eq 0 ]; then
+    echo "Static analysis found no problems."
+    # Add the staged files back to the staging area
+    for file in $stagedFiles; do
+        if [ -f "$file" ]; then
+            git add "$file"
+        fi
+    done
+    exit 0
+else
+    echo "*********************************************************"
+    if [ "$detektStatus" -ne 0 ]; then
+        echo >&2 "Detekt found violations."
+    fi
+    if [ "$ktlintStatus" -ne 0 ]; then
+        echo >&2 "Ktlint found violations."
+        echo "> Try ./gradlew ktlintFormat"
+    fi
+    echo "See 'reports' folder for more detail."
+    echo "*********************************************************"
+    exit 1
+fi

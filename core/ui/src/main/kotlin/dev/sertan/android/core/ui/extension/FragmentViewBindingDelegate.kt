@@ -38,10 +38,9 @@ internal class FragmentViewBindingDelegate<VB : ViewBinding>(
         }
     }
 
-    override fun getValue(thisRef: Fragment, property: KProperty<*>): VB {
-        return binding ?: viewBindingFactory(thisRef.requireView()).also {
+    override fun getValue(thisRef: Fragment, property: KProperty<*>): VB = binding
+        ?: viewBindingFactory(thisRef.requireView()).also {
             binding = it
             thisRef.viewLifecycleOwner.lifecycle.addObserver(lifecycleOwner)
         }
-    }
 }
