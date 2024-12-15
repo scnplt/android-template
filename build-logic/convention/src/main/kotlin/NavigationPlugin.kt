@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
-package dev.sertan.android.core.ui.adapter
+import dev.sertan.android.buildlogic.applyPlugins
+import dev.sertan.android.buildlogic.getLib
+import dev.sertan.android.buildlogic.implementation
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.kotlin.dsl.dependencies
 
-import androidx.recyclerview.widget.DiffUtil
+internal class NavigationPlugin : Plugin<Project> {
+    override fun apply(target: Project): Unit = with(target) {
+        applyPlugins("androidx.navigation.safeargs.kotlin")
 
-internal class BaseListItemDiffUtil<I : BaseListItem<I>> : DiffUtil.ItemCallback<I>() {
-
-    override fun areItemsTheSame(oldItem: I, newItem: I): Boolean = oldItem.areItemsTheSame(newItem)
-
-    override fun areContentsTheSame(oldItem: I, newItem: I): Boolean =
-        oldItem.areContentsTheSame(newItem)
+        dependencies {
+            implementation(getLib("navigation.fragment"))
+            implementation(getLib("navigation.ui"))
+        }
+    }
 }

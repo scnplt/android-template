@@ -15,6 +15,8 @@
  */
 
 plugins {
+    alias(libs.plugins.sc.analysis)
+
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.kotlin.android) apply false
@@ -22,8 +24,15 @@ plugins {
     alias(libs.plugins.safeargs) apply false
 }
 
-subprojects {
-    apply {
-        from(rootProject.file("lint.gradle.kts"))
+task("addPreCommitGitHookOnBuild") {
+    println("Copy pre-commit hook into .git/hooks folder")
+    val from = ".\\.scripts\\pre-commit"
+    val to = ".\\.git\\hooks\\pre-commit"
+    exec {
+        if (System.getProperty("os.name").lowercase().contains("win")) {
+            commandLine("cmd", "/c", "copy", "/Y", from, to)
+        } else {
+            commandLine("cp", from, to)
+        }
     }
 }

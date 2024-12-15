@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-package dev.sertan.android.core.ui.adapter
+dependencyResolutionManagement {
+    repositories {
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
+        mavenCentral()
+    }
 
-import androidx.recyclerview.widget.DiffUtil
-
-internal class BaseListItemDiffUtil<I : BaseListItem<I>> : DiffUtil.ItemCallback<I>() {
-
-    override fun areItemsTheSame(oldItem: I, newItem: I): Boolean = oldItem.areItemsTheSame(newItem)
-
-    override fun areContentsTheSame(oldItem: I, newItem: I): Boolean =
-        oldItem.areContentsTheSame(newItem)
+    versionCatalogs {
+        create("libs") {
+            from(files("../gradle/libs.versions.toml"))
+        }
+    }
 }
+
+rootProject.name = "build-logic"
+include(":convention")
