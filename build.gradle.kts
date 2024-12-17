@@ -24,10 +24,12 @@ plugins {
     alias(libs.plugins.safeargs) apply false
 }
 
-task("addPreCommitGitHookOnBuild") {
-    println("Copy pre-commit hook into .git/hooks folder")
-    val from = ".\\.scripts\\pre-commit"
-    val to = ".\\.git\\hooks\\pre-commit"
+task("addPrePushGitHook") {
+    if (File("$rootDir/.git/hooks/pre-push").exists()) return@task
+
+    println("Copy pre-push hook into .git/hooks folder")
+    val from = ".\\.scripts\\pre-push"
+    val to = ".\\.git\\hooks\\pre-push"
     exec {
         if (System.getProperty("os.name").lowercase().contains("win")) {
             commandLine("cmd", "/c", "copy", "/Y", from, to)
