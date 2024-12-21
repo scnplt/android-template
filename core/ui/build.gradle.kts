@@ -22,10 +22,6 @@ plugins {
 android {
     namespace = "dev.sertan.android.core.ui"
 
-    defaultConfig {
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
     buildFeatures {
         viewBinding = true
     }

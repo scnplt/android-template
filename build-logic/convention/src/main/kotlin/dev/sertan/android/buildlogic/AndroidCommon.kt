@@ -34,6 +34,7 @@ internal fun Project.configureAndroidCommon(extension: CommonExtension<*, *, *, 
 
         defaultConfig {
             minSdk = ApplicationConfig.MIN_SDK
+            testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         }
 
         compileOptions {
