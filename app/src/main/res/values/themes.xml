@@ -1,0 +1,14 @@
+<resources>
+
+    <style name="Theme.Template.Base" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.Template" parent="Theme.Template.Base" />
+
+    <style name="Theme.Template.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/ic_launcher_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="windowSplashScreenAnimationDuration">100</item>
+        <item name="postSplashScreenTheme">@style/Theme.Template</item>
+    </style>
+
+</resources>
