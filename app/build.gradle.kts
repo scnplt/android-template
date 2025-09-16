@@ -30,4 +30,5 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.kotlin.serialization.json)
+    implementation(libs.navigation.compose)
 }

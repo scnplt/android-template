@@ -5,11 +5,12 @@ composeBom = "2025.09.00"
 coreKtx = "1.17.0"
 detekt = "1.23.8"
 hilt = "2.57.1"
-hiltNavigationCompose = "1.2.0"
+hiltNavigationCompose = "1.3.0"
 kotlin = "2.2.20"
 kotlinSerializationJson = "1.9.0"
 ksp = "2.2.20-2.0.3"
 ktlint = "1.7.1"
+navigationCompose = "2.9.4"
 splashScreen = "1.0.1"
 viewmodelCompose = "2.9.3"
 
@@ -35,6 +36,7 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.r
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 kotlin-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinSerializationJson" }
 ktlint-cli = { group = "com.pinterest.ktlint", name = "ktlint-cli", version.ref = "ktlint" }
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 
 [plugins]
 # Plugins provided by build-logic
