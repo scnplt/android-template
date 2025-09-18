@@ -39,7 +39,8 @@ internal class AnalysisPlugin : Plugin<Project> {
                 "-r", "html:$outputFileWithoutExtension.html",
                 "-r", "md:$outputFileWithoutExtension.md",
                 "--build-upon-default-config",
-                "--parallel"
+                "--parallel",
+                "-ex", "**/build/**,**/generated/**"
             )
         }
     }

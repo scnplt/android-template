@@ -20,6 +20,7 @@ ktlint_function_signature_rule_force_multiline_when_parameter_count_greater_or_e
 ktlint_ignore_back_ticked_identifier = false
 ktlint_property_naming_constant_naming = screaming_snake_case
 ktlint_standard_chain-method-continuation = disabled
+ktlint_standard_annotation = disabled
 ktlint_standard_argument-list-wrapping = disabled
 ktlint_standard_no-empty-first-line-in-class-body = disabled
 ktlint_standard_trailing-comma-on-declaration-site = disabled
