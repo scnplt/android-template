@@ -1,6 +1,6 @@
 # noinspection EditorConfigKeyCorrectness
 [*.{kt,kts}]
-ij_kotlin_allow_trailing_comma = true
+ij_kotlin_allow_trailing_comma = false
 ij_kotlin_allow_trailing_comma_on_call_site = false
 ij_kotlin_indent_before_arrow_on_new_line = false
 ij_kotlin_line_break_after_multiline_when_entry = true
