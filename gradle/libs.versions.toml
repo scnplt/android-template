@@ -11,6 +11,7 @@ kotlinSerializationJson = "1.9.0"
 ksp = "2.2.20-2.0.3"
 ktlint = "1.7.1"
 navigationCompose = "2.9.5"
+slackComposeLint = "1.4.2"
 splashScreen = "1.0.1"
 viewmodelCompose = "2.9.4"
 
@@ -36,6 +37,7 @@ hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-com
 kotlin-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinSerializationJson" }
 ktlint-cli = { group = "com.pinterest.ktlint", name = "ktlint-cli", version.ref = "ktlint" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+slack-compose-lint = { group = "com.slack.lint.compose", name = "compose-lint-checks", version.ref = "slackComposeLint" }
 
 [plugins]
 # Plugins provided by build-logic
