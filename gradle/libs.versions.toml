@@ -1,7 +1,7 @@
 [versions]
 activityCompose = "1.11.0"
 androidGradlePlugin = "8.13.0"
-composeBom = "2025.09.00"
+composeBom = "2025.09.01"
 coreKtx = "1.17.0"
 detekt = "1.23.8"
 hilt = "2.57.1"
@@ -10,9 +10,9 @@ kotlin = "2.2.20"
 kotlinSerializationJson = "1.9.0"
 ksp = "2.2.20-2.0.3"
 ktlint = "1.7.1"
-navigationCompose = "2.9.4"
+navigationCompose = "2.9.5"
 splashScreen = "1.0.1"
-viewmodelCompose = "2.9.3"
+viewmodelCompose = "2.9.4"
 
 [libraries]
 # For build-logic
