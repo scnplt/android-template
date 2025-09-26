@@ -16,7 +16,6 @@ internal fun Project.configureCompose(commonExtension: CommonExtension<*, *, *, 
         "androidTestImplementation"(composeBom)
         // Material 3
         "implementation"(getLibrary("compose.material3"))
-        "implementation"(getLibrary("compose.material.icons.extended"))
         // Preview Support
         "implementation"(getLibrary("compose.ui.tooling.preview"))
         "debugImplementation"(getLibrary("compose.ui.tooling"))
