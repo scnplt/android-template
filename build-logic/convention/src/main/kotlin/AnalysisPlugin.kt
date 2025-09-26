@@ -1,4 +1,5 @@
 import dev.sertan.buildlogic.getLibrary
+import dev.sertan.buildlogic.reportsFolder
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -11,9 +12,6 @@ import org.gradle.kotlin.dsl.register
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 
 internal class AnalysisPlugin : Plugin<Project> {
-
-    private val Project.reportsFolder
-        get() = "$rootDir/reports"
 
     override fun apply(target: Project) {
         configureDetekt(target)
