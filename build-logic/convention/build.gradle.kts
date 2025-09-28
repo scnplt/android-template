@@ -22,17 +22,17 @@ gradlePlugin {
             id = libs.plugins.sc.analysis.get().pluginId
             implementationClass = "AnalysisPlugin"
         }
-        register("composeApplication") {
-            id = libs.plugins.sc.compose.application.get().pluginId
-            implementationClass = "AndroidComposeAppPlugin"
-        }
-        register("composeLibrary") {
-            id = libs.plugins.sc.compose.library.get().pluginId
-            implementationClass = "AndroidComposeLibPlugin"
+        register("applicationCompose") {
+            id = libs.plugins.sc.application.compose.get().pluginId
+            implementationClass = "AndroidApplicationComposePlugin"
         }
         register("hilt") {
             id = libs.plugins.sc.hilt.get().pluginId
             implementationClass = "HiltPlugin"
+        }
+        register("libraryCompose") {
+            id = libs.plugins.sc.library.compose.get().pluginId
+            implementationClass = "AndroidLibraryComposePlugin"
         }
     }
 }

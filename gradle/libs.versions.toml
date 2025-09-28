@@ -42,9 +42,9 @@ slack-compose-lint = { group = "com.slack.lint.compose", name = "compose-lint-ch
 [plugins]
 # Plugins provided by build-logic
 sc-analysis = { id = "sc.analysis" }
-sc-compose-application = { id = "sc.compose.application" }
-sc-compose-library = { id = "sc.compose.library" }
+sc-application-compose = { id = "sc.application.compose" }
 sc-hilt = { id = "sc.hilt" }
+sc-library-compose = { id = "sc.library.compose" }
 
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }

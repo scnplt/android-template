@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.sc.compose.application)
+    alias(libs.plugins.sc.application.compose)
     alias(libs.plugins.sc.hilt)
 }
 

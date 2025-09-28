@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.sc.compose.library)
+    alias(libs.plugins.sc.library.compose)
 }
 
 android {
