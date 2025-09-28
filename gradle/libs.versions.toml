@@ -44,6 +44,7 @@ slack-compose-lint = { group = "com.slack.lint.compose", name = "compose-lint-ch
 sc-analysis = { id = "sc.analysis" }
 sc-application-compose = { id = "sc.application.compose" }
 sc-hilt = { id = "sc.hilt" }
+sc-library = { id = "sc.library" }
 sc-library-compose = { id = "sc.library.compose" }
 
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

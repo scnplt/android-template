@@ -30,6 +30,10 @@ gradlePlugin {
             id = libs.plugins.sc.hilt.get().pluginId
             implementationClass = "HiltPlugin"
         }
+        register("library") {
+            id = libs.plugins.sc.library.asProvider().get().pluginId
+            implementationClass = "AndroidLibraryPlugin"
+        }
         register("libraryCompose") {
             id = libs.plugins.sc.library.compose.get().pluginId
             implementationClass = "AndroidLibraryComposePlugin"
