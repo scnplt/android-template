@@ -32,3 +32,10 @@ jobs:
 
       - name: Scan with Detekt
         run: ./gradlew detektCheck
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: reports/**
