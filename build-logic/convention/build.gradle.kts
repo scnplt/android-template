@@ -7,6 +7,7 @@ group = "dev.sertan.buildlogic"
 dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
+    compileOnly(libs.room.gradlePlugin)
 }
 
 tasks {
@@ -37,6 +38,10 @@ gradlePlugin {
         register("libraryCompose") {
             id = libs.plugins.sc.library.compose.get().pluginId
             implementationClass = "AndroidLibraryComposePlugin"
+        }
+        register("room") {
+            id = libs.plugins.sc.room.get().pluginId
+            implementationClass = "RoomPlugin"
         }
     }
 }
