@@ -32,7 +32,10 @@ internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension<*, 
     extensions.configure<KotlinAndroidExtension> {
         compilerOptions {
             jvmTarget.set(ProjectConfigs.JVM_TARGET)
-            freeCompilerArgs.add("-opt-in=kotlin.time.ExperimentalTime")
+            freeCompilerArgs.addAll(
+                "-opt-in=kotlin.time.ExperimentalTime",
+                "-Xcontext-parameters"
+            )
         }
     }
 
