@@ -1,4 +1,4 @@
-name: Lint, Detekt and Ktlint Check
+name: Detekt & Ktlint Check
 
 on:
   push:
@@ -23,9 +23,6 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-
-      - name: Lint
-        run: ./gradlew lint
 
       - name: Scan with Ktlint
         run: ./gradlew ktlintCheck

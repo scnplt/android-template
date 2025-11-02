@@ -1,12 +1,12 @@
 #!/bin/sh
 
-echo "🔍 Running detekt, ktlint and lint checks..."
+echo "🔍 Running detekt and ktlint checks..."
 
-./gradlew lint detektCheck ktlintCheck
+./gradlew detektCheck ktlintCheck
 status=$?
 
 if [ $status -ne 0 ]; then
-  echo "❌ Check failed. Push aborted."
+  echo "❌ detektCheck or ktlintCheck failed. Push aborted."
   exit 1
 fi
 

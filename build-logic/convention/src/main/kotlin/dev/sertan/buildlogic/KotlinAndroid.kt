@@ -22,11 +22,6 @@ internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension<*, 
             sourceCompatibility = ProjectConfigs.JAVA_VERSION
             targetCompatibility = ProjectConfigs.JAVA_VERSION
         }
-
-        lint {
-            htmlOutput = file("$reportsFolder/lint-results.html")
-            textOutput = file("$reportsFolder/lint-results.txt")
-        }
     }
 
     extensions.configure<KotlinAndroidExtension> {

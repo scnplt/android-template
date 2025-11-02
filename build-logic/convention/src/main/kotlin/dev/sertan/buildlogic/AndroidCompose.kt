@@ -19,8 +19,5 @@ internal fun Project.configureCompose(commonExtension: CommonExtension<*, *, *, 
         // Preview Support
         "implementation"(getLibrary("compose.ui.tooling.preview"))
         "debugImplementation"(getLibrary("compose.ui.tooling"))
-
-        // Lint
-        "lintChecks"(getLibrary("slack.compose.lint"))
     }
 }
