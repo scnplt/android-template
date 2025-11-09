@@ -10,7 +10,7 @@ internal class HiltPlugin : Plugin<Project> {
         apply(plugin = "com.google.dagger.hilt.android")
 
         dependencies {
-            "ksp"(getLibrary("hilt.compiler"))
+            "ksp"(getLibrary("hilt.android.compiler"))
             "implementation"(getLibrary("hilt.android"))
         }
     }
