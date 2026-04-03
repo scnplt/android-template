@@ -5,10 +5,10 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.dependencies
 
-internal fun Project.configureCompose(commonExtension: CommonExtension<*, *, *, *, *, *>) {
+internal fun Project.configureCompose(commonExtension: CommonExtension) {
     apply(plugin = "org.jetbrains.kotlin.plugin.compose")
 
-    commonExtension.buildFeatures.compose = true
+    commonExtension.buildFeatures.apply { compose = true }
 
     dependencies {
         val composeBom = platform(getLibrary("compose.bom"))
