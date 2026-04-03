@@ -17,16 +17,12 @@ internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension<*, 
             minSdk = ProjectConfigs.MIN_SDK
             testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         }
-
-        compileOptions {
-            sourceCompatibility = ProjectConfigs.JAVA_VERSION
-            targetCompatibility = ProjectConfigs.JAVA_VERSION
-        }
     }
 
     extensions.configure<KotlinAndroidExtension> {
+        jvmToolchain(ProjectConfigs.JDK_VERSION)
+
         compilerOptions {
-            jvmTarget.set(ProjectConfigs.JVM_TARGET)
             freeCompilerArgs.addAll(
                 "-opt-in=kotlin.time.ExperimentalTime",
                 "-Xcontext-parameters"
