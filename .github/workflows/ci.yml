@@ -1,0 +1,274 @@
+name: CI
+
+# Two bars, scaled to the target branch:
+#   PR -> dev  : `test` and `lint` only, for fast feedback on the integration branch.
+#   PR -> main : those two plus `android-lint` and `instrumented`, and then
+#                `release` last — it waits on all four, so the APK is only ever
+#                built from a tree that passed every other gate.
+# Branch protection is per branch, so `dev` requires two checks and `main` requires five.
+#
+# The main-bar condition tests `github.ref` as well as `github.base_ref`, because
+# `base_ref` is empty on a `push` event: gating on it alone meant a commit landing on
+# `main` — a merge, or a push that bypassed protection — ran `test` and `lint` and
+# nothing else, so the five-check promise above held only for as long as branch
+# protection did. It also left the three main-only jobs unable to seed a Gradle cache,
+# since `setup-gradle` writes one from the default branch and they never ran there.
+#
+# Mirrors the shape of devmon-agent's CI, adapted to Gradle: the agent splits its
+# release bar into lint/image/shellcheck/gosec/govulncheck/e2e; here the equivalent
+# questions are "does R8 still produce an APK", "does Android Lint see anything the
+# Kotlin linters cannot", and "does the app actually start on a device".
+
+on:
+  pull_request:
+    branches: [dev, main]
+  # `main` only. A PR's checks already run against the merge result, so re-running
+  # the same two jobs on the merge commit that lands on `dev` re-validates a tree CI
+  # just cleared. `main` keeps its push trigger: it is the branch a release is cut
+  # from, it is where a protection bypass would do the most damage, and it is the
+  # default branch, so it is the only branch whose runs populate the Gradle cache.
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # The Gradle daemon runs on 21 (gradle/gradle-daemon-jvm.properties); the modules
+  # compile against a 17 toolchain (ProjectConfigs.JDK_VERSION). Both are installed
+  # so neither has to be downloaded mid-build — the foojay resolver would otherwise
+  # fetch 17 on every run.
+  DAEMON_JDK: '21'
+  TOOLCHAIN_JDK: '17'
+  # minSdk is 30, so that is the floor worth proving the app boots on.
+  EMULATOR_API_LEVEL: 30
+
+jobs:
+  test:
+    name: test
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: |
+            ${{ env.TOOLCHAIN_JDK }}
+            ${{ env.DAEMON_JDK }}
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Build
+        run: ./gradlew assembleDebug
+
+      - name: Unit tests
+        run: ./gradlew testDebugUnitTest
+
+      # Uploaded on failure too — the HTML report is the only way to read a
+      # Gradle test failure without re-running the job locally.
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results
+          path: '**/build/reports/tests/**'
+          if-no-files-found: ignore
+
+  lint:
+    name: lint
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # The commit-subject check below walks base..head, and neither end of that
+          # range exists in a depth-1 clone.
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: |
+            ${{ env.TOOLCHAIN_JDK }}
+            ${{ env.DAEMON_JDK }}
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      # `scripts/git-hooks/commit-msg` runs only where somebody ran
+      # `./gradlew installGitHooks`, and merges here preserve every commit rather than
+      # squashing them, so an unchecked subject lands on `dev` for good. Runs the hook
+      # itself against the commits the PR adds, so the two can never drift apart.
+      #
+      # A step in `lint` rather than a job of its own: a sixth required check would
+      # mean a branch-protection change, and this belongs to the same question the job
+      # already answers.
+      - name: Commit subjects
+        if: github.event_name == 'pull_request'
+        env:
+          RANGE: ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}
+        run: |
+          status=0
+          while IFS= read -r subject; do
+            [ -n "$subject" ] || continue
+            printf '%s\n' "$subject" > "$RUNNER_TEMP/commit-subject"
+            if ! bash scripts/git-hooks/commit-msg "$RUNNER_TEMP/commit-subject"; then
+              status=1
+            fi
+          done < <(git log --format=%s "$RANGE")
+          exit $status
+
+      # Run both even if the first fails: a contributor should get the whole
+      # style picture from one run, not one violation at a time.
+      - name: Ktlint
+        if: ${{ !cancelled() }}
+        run: ./gradlew ktlintCheck
+
+      - name: Detekt
+        if: ${{ !cancelled() }}
+        run: ./gradlew detektCheck
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: analysis-reports
+          path: reports/**
+          if-no-files-found: ignore
+
+  # Proves the minified path still builds: the app module runs R8 with resource
+  # shrinking, and every library ships a consumer-rules.pro that only takes effect
+  # here. A keep rule that goes missing is invisible in a debug build and fails at
+  # runtime in a release one, which is exactly the failure this job exists to catch.
+  # The APK is unsigned — no signing config is wired up, and none is needed to
+  # answer the question this job asks.
+  #
+  # Last in the chain deliberately: it is the only job that produces an artifact
+  # worth keeping, and a release APK built from a tree that fails any other gate is
+  # not one anybody should be able to download. `needs` buys exactly that and no
+  # more parallelism than that: `android-lint` and `instrumented` declare none, so
+  # four jobs still start at once on a main PR and only R8 waits.
+  release:
+    name: release
+    timeout-minutes: 30
+    needs: [test, lint, android-lint, instrumented]
+    if: github.base_ref == 'main' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: |
+            ${{ env.TOOLCHAIN_JDK }}
+            ${{ env.DAEMON_JDK }}
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Assemble release
+        run: ./gradlew assembleRelease
+
+      # The one thing a green `assembleRelease` does not prove. Navigation routes
+      # resolve through kotlinx.serialization, so a stripped serializer builds fine,
+      # passes every unit test, and crashes on a release install — and the rules that
+      # keep them ship inside the library rather than living in this repository, so
+      # nothing here would have to change for them to disappear.
+      - name: Verify routes survived R8
+        run: bash scripts/verify-release-mapping.sh
+
+      - name: Upload mapping and APK
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-artifacts
+          path: |
+            app/build/outputs/apk/release/**
+            app/build/outputs/mapping/release/**
+          if-no-files-found: ignore
+
+  # Ktlint and Detekt read Kotlin; Android Lint reads the things they cannot —
+  # manifest merges, unused or missing resources, API levels below minSdk,
+  # accessibility gaps, and hardcoded values in XML. On a design-system repo the
+  # accessibility and resource checks are the point.
+  android-lint:
+    name: android-lint
+    timeout-minutes: 30
+    if: github.base_ref == 'main' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: |
+            ${{ env.TOOLCHAIN_JDK }}
+            ${{ env.DAEMON_JDK }}
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Android Lint
+        run: ./gradlew lintRelease
+
+      - name: Upload lint reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-lint-reports
+          path: '**/build/reports/lint-results-*.*'
+          if-no-files-found: ignore
+
+  # The instrumented suite is the only gate that runs the app on a real Android
+  # runtime rather than a JVM stub. It boots an emulator, so it takes minutes and
+  # stays on the release bar rather than taxing every integration PR into dev.
+  instrumented:
+    name: instrumented
+    timeout-minutes: 45
+    if: github.base_ref == 'main' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: |
+            ${{ env.TOOLCHAIN_JDK }}
+            ${{ env.DAEMON_JDK }}
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      # The emulator needs hardware acceleration; without KVM it either refuses to
+      # start or runs too slowly to finish inside the job timeout.
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Connected tests
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
+        with:
+          api-level: ${{ env.EMULATOR_API_LEVEL }}
+          target: google_apis
+          arch: x86_64
+          # No window, no audio, no boot animation — nothing here needs a display,
+          # and the snapshot is skipped so every run starts from a known state.
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
+          disable-animations: true
+          script: ./gradlew connectedDebugAndroidTest
+
+      - name: Upload instrumented results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: instrumented-results
+          path: '**/build/reports/androidTests/**'
+          if-no-files-found: ignore
