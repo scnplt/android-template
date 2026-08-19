@@ -184,6 +184,10 @@ coroutines:
     active: false
   InjectDispatcher:
     active: true
+    # A test names the dispatcher it wants on purpose — that is what
+    # `UnconfinedTestDispatcher` is for. The rule is about production code taking its
+    # dispatcher from the graph, and only production code.
+    excludes: ['**/test/**', '**/androidTest/**']
     dispatcherNames:
       - 'IO'
       - 'Default'
@@ -440,6 +444,11 @@ potential-bugs:
     active: true
   IgnoredReturnValue:
     active: true
+    # Excluded from tests because detekt 1.23.8 does not reliably survive them: the rule
+    # can throw an NPE of its own (`DescriptorUtilKt.findPackage`) on a test file, which
+    # fails the whole module's analysis rather than reporting a finding. Production code —
+    # where an ignored return value is actually a bug — is still checked.
+    excludes: ['**/test/**', '**/androidTest/**']
     restrictToConfig: true
     returnValueAnnotations:
       - 'CheckResult'
@@ -490,8 +499,13 @@ potential-bugs:
     active: true
   UnreachableCatchBlock:
     active: true
+  # Off, because with type resolution it reports code that plainly runs — typically the
+  # statement after an `?: return`. detekt 1.23 analyses with an embedded Kotlin 1.9
+  # compiler, which cannot read every declaration in the 2.3 stdlib this project builds
+  # against, and an unreadable return type resolves to `Nothing`. Worth switching back on
+  # when detekt ships a compiler that matches the language version.
   UnreachableCode:
-    active: true
+    active: false
   UnsafeCallOnNullableType:
     active: true
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**']
@@ -714,6 +728,9 @@ style:
     allowNonStandardGrouping: false
   UnnecessaryAbstractClass:
     active: true
+    # A Hilt `@Binds` module is abstract because Dagger requires it to be, not because
+    # anything is left for a subclass to fill in.
+    ignoreAnnotated: ['dagger.Module']
   UnnecessaryAnnotationUseSiteTarget:
     active: false
   UnnecessaryApply:
