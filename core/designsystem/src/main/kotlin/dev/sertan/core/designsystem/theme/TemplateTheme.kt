@@ -26,8 +26,13 @@ fun TemplateTheme(
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkScheme
-        else -> LightScheme
+        darkTheme -> {
+            DarkScheme
+        }
+
+        else -> {
+            LightScheme
+        }
     }
 
     MaterialTheme(
