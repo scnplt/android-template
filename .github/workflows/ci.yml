@@ -14,10 +14,9 @@ name: CI
 # protection did. It also left the three main-only jobs unable to seed a Gradle cache,
 # since `setup-gradle` writes one from the default branch and they never ran there.
 #
-# Mirrors the shape of devmon-agent's CI, adapted to Gradle: the agent splits its
-# release bar into lint/image/shellcheck/gosec/govulncheck/e2e; here the equivalent
-# questions are "does R8 still produce an APK", "does Android Lint see anything the
-# Kotlin linters cannot", and "does the app actually start on a device".
+# The three main-only jobs are there for the questions a debug build and the Kotlin
+# linters cannot answer: "does R8 still produce an APK", "does Android Lint see
+# anything ktlint and detekt cannot", and "does the app actually start on a device".
 
 on:
   pull_request:
