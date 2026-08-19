@@ -18,11 +18,13 @@ internal class AndroidLibraryPlugin : Plugin<Project> {
 
             buildTypes {
                 release {
+                    // A library is never minified on its own — R8 runs once, over the
+                    // whole app. `proguardFiles` here named a `proguard-rules.pro` that
+                    // no library module has; it stayed harmless only because nothing
+                    // resolved it while minification was off, and would have failed the
+                    // build outright the day someone turned it on. Rules a library needs
+                    // its consumers to apply belong in `consumer-rules.pro` above.
                     isMinifyEnabled = false
-                    proguardFiles(
-                        getDefaultProguardFile("proguard-android-optimize.txt"),
-                        "proguard-rules.pro"
-                    )
                 }
             }
         }
