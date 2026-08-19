@@ -611,7 +611,10 @@ style:
     maxJumpCount: 1
   MagicNumber:
     active: true
-    excludes: ['**/theme/**', '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**', '**/*.kts']
+    # `**/icon/**` joins `**/theme/**` for the same reason: both hold literal design values
+    # transcribed from the handoff — token dp/sp figures there, SVG path coordinates here.
+    # A constant per path coordinate would name nothing the number does not already say.
+    excludes: ['**/theme/**', '**/icon/**', '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**', '**/*.kts']
     ignoreNumbers:
       - '-1'
       - '0'
